@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: lifeos-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lifeos_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  address: 0.0.0.0
+  port: 8080
+
+lifeos:
+  google:
+    places:
+      api-key: ${GOOGLE_PLACES_API_KEY:}
+      base-url: https://places.googleapis.com/v1
+      enabled: ${GOOGLE_PLACES_ENABLED:false}
+
+  payway:
+    enabled: true
+    base-url: https://checkout-sandbox.payway.com.kh
+    merchant-id: ${PAYWAY_MERCHANT_ID:}
+    private-key: ${PAYWAY_PRIVATE_KEY:}
+    rsa-public-key: ${PAYWAY_RSA_PUBLIC_KEY:}
+    api-key: ${PAYWAY_API_KEY:}
+    timezone: Asia/Phnom_Penh
+    default-currency: USD
+    polling:
+
+      enabled: false
+
+  ai:
+    base-url: http://localhost:8010
+    enabled: true
