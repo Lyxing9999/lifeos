@@ -1,0 +1,2 @@
+SELECT * FROM LeaveRequests ORDER BY id DESC;
+GO

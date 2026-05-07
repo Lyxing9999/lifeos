@@ -1,0 +1,63 @@
+# =========================
+# SENSITIVE DATA (NEVER COMMIT)
+# =========================
+.env
+.env.*
+*.pem
+*.key
+secrets.json
+android/key.properties
+mobile/android/key.properties
+credentials.json
+
+# =========================
+# OS & EDITORS
+# =========================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# =========================
+# BACKEND (Spring Boot / Java)
+# =========================
+.gradle/
+build/
+bin/
+out/
+*.class
+*.log
+boot.log
+
+# =========================
+# MOBILE (Flutter / Dart)
+# =========================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/mobile/build/
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.podspec
+ios/Flutter/GeneratedPluginRegistrant.h
+ios/Flutter/GeneratedPluginRegistrant.m
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+
+# =========================
+# AI SERVICE (Python)
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+venv/
+.venv/
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/

@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: lifeos-backend
+
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/lifeos_db}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:validate}
+    show-sql: ${SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: ${FORMAT_SQL:false}
+
+server:
+  address: 0.0.0.0
+  port: ${PORT:8080}
+
+lifeos:
+  google:
+    places:
+      api-key: ${GOOGLE_PLACES_API_KEY:}
+      base-url: https://places.googleapis.com/v1
+      enabled: ${GOOGLE_PLACES_ENABLED:false}
+
+  auth:
+    google:
+      client-id: ${GOOGLE_CLIENT_ID:}
+    jwt:
+      secret: ${JWT_SECRET:dev-local-jwt-secret-change-before-production}
+      expiration-minutes: ${JWT_EXPIRATION_MINUTES:10080}
+
+  payway:
+    enabled: ${PAYWAY_ENABLED:false}
+    base-url: ${PAYWAY_BASE_URL:https://checkout-sandbox.payway.com.kh}
+    merchant-id: ${PAYWAY_MERCHANT_ID:}
+    private-key: ${PAYWAY_PRIVATE_KEY:}
+    rsa-public-key: ${PAYWAY_RSA_PUBLIC_KEY:}
+    api-key: ${PAYWAY_API_KEY:}
+    timezone: Asia/Phnom_Penh
+    default-currency: USD
+    polling:
+      enabled: ${PAYWAY_POLLING_ENABLED:false}
+
+  ai:
+    base-url: ${AI_BASE_URL:http://localhost:8010}
+    enabled: ${AI_ENABLED:false}
