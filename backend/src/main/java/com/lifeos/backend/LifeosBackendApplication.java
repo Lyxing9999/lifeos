@@ -1,10 +1,10 @@
 package com.lifeos.backend;
 
-import com.lifeos.backend.config.AiServiceProperties;
+import com.lifeos.backend.common.config.AiServiceProperties;
 
-import com.lifeos.backend.config.GooglePlacesProperties;
+import com.lifeos.backend.common.config.GooglePlacesProperties;
 
-import com.lifeos.backend.config.PayWayProperties;
+import com.lifeos.backend.common.config.PayWayProperties;
 
 import org.springframework.boot.SpringApplication;
 

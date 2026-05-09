@@ -11,6 +11,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // --- ADD THIS BLOCK ---
+    @ExceptionHandler(DomainRuleException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDomainRule(DomainRuleException ex) {
+        // 422 Unprocessable Entity is perfect for business logic/state machine rejections
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(ApiResponse.fail(ex.getMessage()));
+    }
+    // ----------------------
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFound(NotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

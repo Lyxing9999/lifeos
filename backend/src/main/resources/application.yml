@@ -49,3 +49,15 @@ lifeos:
   ai:
     base-url: ${AI_BASE_URL:http://localhost:8010}
     enabled: ${AI_ENABLED:false}
+  engine:
+    task-spawner:
+      enabled: true
+      fixed-delay-ms: 1800000
+
+    midnight-rollover:
+      enabled: true
+      fixed-delay-ms: 900000
+    task:
+      scheduled-worker:
+        enabled: false
+        spawn-fixed-delay-ms: 18000

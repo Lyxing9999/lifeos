@@ -2,43 +2,73 @@ package com.lifeos.backend.today.api;
 
 import com.lifeos.backend.auth.application.CurrentUserService;
 import com.lifeos.backend.common.response.ApiResponse;
-import com.lifeos.backend.today.application.TodayService;
-import com.lifeos.backend.today.dto.TodayResponse;
+import com.lifeos.backend.today.api.response.TodayWorkspaceResponse;
+import com.lifeos.backend.today.application.TodayWorkspaceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
-        import java.time.LocalDate;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/today")
 @RequiredArgsConstructor
-@Tag(name = "Today", description = "Today aggregate API")
+@Tag(name = "Today", description = "Present focus workspace APIs")
 public class TodayController {
 
-    private final TodayService todayService;
+    private final TodayWorkspaceService todayWorkspaceService;
     private final CurrentUserService currentUserService;
 
-    @GetMapping("/me")
-    @Operation(summary = "Get complete today data for authenticated user")
-    public ApiResponse<TodayResponse> getMine(
-            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    @GetMapping("/me/workspace")
+    @Operation(summary = "Get Today workspace for authenticated user")
+    public ApiResponse<TodayWorkspaceResponse> getMyWorkspace(
+            @RequestParam(value = "date", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date
     ) {
         UUID userId = currentUserService.getUserId();
-        return ApiResponse.success(todayService.get(userId, date));
+
+        return ApiResponse.success(
+                todayWorkspaceService.getWorkspace(userId, date)
+        );
     }
 
-    @Deprecated
-    @GetMapping("/{userId}")
-    @Operation(summary = "Deprecated: use /api/v1/today/me")
-    public ApiResponse<TodayResponse> getDeprecated(
-            @PathVariable UUID userId,
-            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    /**
+     * Dogfooding/dev endpoint.
+     * Keep if you still use manual userId during local development.
+     */
+    @GetMapping("/workspace")
+    @Operation(summary = "Get Today workspace by userId")
+    public ApiResponse<TodayWorkspaceResponse> getWorkspace(
+            @RequestParam UUID userId,
+            @RequestParam(value = "date", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date
     ) {
-        UUID authenticatedUserId = currentUserService.getUserId();
-        return ApiResponse.success(todayService.get(authenticatedUserId, date));
+        return ApiResponse.success(
+                todayWorkspaceService.getWorkspace(userId, date)
+        );
+    }
+
+    /**
+     * Backward compatible route.
+     * Remove later after frontend migrates to /me/workspace.
+     */
+    @Deprecated
+    @GetMapping("/me")
+    @Operation(summary = "Deprecated: use /api/v1/today/me/workspace")
+    public ApiResponse<TodayWorkspaceResponse> getMine(
+            @RequestParam(value = "date", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date
+    ) {
+        UUID userId = currentUserService.getUserId();
+
+        return ApiResponse.success(
+                todayWorkspaceService.getWorkspace(userId, date)
+        );
     }
 }

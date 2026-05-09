@@ -1,6 +1,6 @@
 package com.lifeos.backend.task.domain.service;
 
-import com.lifeos.backend.task.domain.Task;
+import com.lifeos.backend.task.domain.entity.TaskInstance;
 import com.lifeos.backend.task.domain.enums.TaskRecurrenceType;
 import com.lifeos.backend.task.domain.valueobject.TaskRecurrenceRule;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,12 +16,12 @@ import static org.mockito.Mockito.when;
 class TaskRecurrenceResolverTest {
 
     private TaskRecurrenceResolver resolver;
-    private Task mockTask;
+    private TaskInstance mockTask;
 
     @BeforeEach
     void setUp() {
         resolver = new TaskRecurrenceResolver();
-        mockTask = mock(Task.class);
+        mockTask = mock(TaskInstance.class);
     }
 
     @Test

@@ -2,8 +2,9 @@ package com.lifeos.backend.task.application;
 
 import com.lifeos.backend.common.util.UserTimeService;
 import com.lifeos.backend.schedule.application.ScheduleQueryService;
-import com.lifeos.backend.task.domain.Task;
-import com.lifeos.backend.task.domain.TaskCompletion;
+import com.lifeos.backend.task.application.command.TaskCommandService;
+import com.lifeos.backend.task.domain.entity.TaskInstance;
+import com.lifeos.backend.task.domain.entity.TaskCompletion;
 import com.lifeos.backend.task.domain.TaskCompletionRepository;
 import com.lifeos.backend.task.domain.TaskRepository;
 import com.lifeos.backend.task.domain.enums.TaskMode;
@@ -62,7 +63,7 @@ class TaskCommandServiceTest {
         UUID userId = UUID.randomUUID();
         LocalDate date = LocalDate.of(2026, 5, 1);
 
-        Task task = normalCompletedTask(userId, "Inbox win");
+        TaskInstance task = normalCompletedTask(userId, "Inbox win");
         task.setDueDate(null);
         task.setDueDateTime(null);
         task.setAchievedDate(date);
@@ -88,7 +89,7 @@ class TaskCommandServiceTest {
         UUID userId = UUID.randomUUID();
         LocalDate date = LocalDate.of(2026, 5, 1);
 
-        Task task = normalCompletedTask(userId, "Pay rent");
+        TaskInstance task = normalCompletedTask(userId, "Pay rent");
         task.setAchievedDate(null);
         task.setDueDate(date);
 
@@ -111,7 +112,7 @@ class TaskCommandServiceTest {
         UUID userId = UUID.randomUUID();
         LocalDate date = LocalDate.of(2026, 5, 1);
 
-        Task task = normalCompletedTask(userId, "Submit report");
+        TaskInstance task = normalCompletedTask(userId, "Submit report");
         task.setAchievedDate(null);
         task.setDueDateTime(LocalDateTime.of(2026, 5, 1, 14, 30));
 
@@ -136,7 +137,7 @@ class TaskCommandServiceTest {
         LocalDate achievedDate = LocalDate.of(2026, 5, 1);
         LocalDate dueDate = LocalDate.of(2026, 5, 10);
 
-        Task task = normalCompletedTask(userId, "Finish early");
+        TaskInstance task = normalCompletedTask(userId, "Finish early");
         task.setAchievedDate(achievedDate);
         task.setDueDate(dueDate);
 
@@ -158,7 +159,7 @@ class TaskCommandServiceTest {
         UUID userId = UUID.randomUUID();
         LocalDate selectedDate = LocalDate.of(2026, 5, 1);
 
-        Task task = normalCompletedTask(userId, "Pay rent");
+        TaskInstance task = normalCompletedTask(userId, "Pay rent");
         task.setAchievedDate(LocalDate.of(2026, 5, 2));
         task.setDueDate(selectedDate);
 
@@ -181,7 +182,7 @@ class TaskCommandServiceTest {
         UUID userId = UUID.randomUUID();
         LocalDate date = LocalDate.of(2026, 5, 1);
 
-        Task task = normalTask(userId, "Buy shoes");
+        TaskInstance task = normalTask(userId, "Buy shoes");
         task.setStatus(TaskStatus.TODO);
         task.setDueDate(date);
 
@@ -204,7 +205,7 @@ class TaskCommandServiceTest {
         UUID userId = UUID.randomUUID();
         LocalDate date = LocalDate.of(2026, 5, 1);
 
-        Task task = normalCompletedTask(userId, "Old inbox task");
+        TaskInstance task = normalCompletedTask(userId, "Old inbox task");
         task.setDueDate(null);
         task.setDueDateTime(null);
         task.setAchievedDate(null);
@@ -257,7 +258,7 @@ class TaskCommandServiceTest {
         UUID recurringTaskId = UUID.randomUUID();
         LocalDate date = LocalDate.of(2026, 5, 1);
 
-        Task normalTask = normalCompletedTask(userId, "Pay rent");
+        TaskInstance normalTask = normalCompletedTask(userId, "Pay rent");
         normalTask.setAchievedDate(date);
 
         TaskCompletion recurringCompletion = new TaskCompletion();
@@ -290,7 +291,7 @@ class TaskCommandServiceTest {
                 .atZone(zoneId)
                 .toLocalDate();
 
-        Task task = normalCompletedTask(userId, "Today task");
+        TaskInstance task = normalCompletedTask(userId, "Today task");
         task.setAchievedDate(todayInUserZone);
 
         when(userTimeService.getUserZoneId(userId))
@@ -341,7 +342,7 @@ class TaskCommandServiceTest {
         UUID userId = UUID.randomUUID();
         UUID taskId = UUID.randomUUID();
 
-        Task task = normalTask(userId, "Daily workout");
+        TaskInstance task = normalTask(userId, "Daily workout");
         task.setId(taskId);
 
         when(repository.findById(taskId))
@@ -365,7 +366,7 @@ class TaskCommandServiceTest {
         UUID taskId = UUID.randomUUID();
         LocalDate until = LocalDate.of(2026, 5, 10);
 
-        Task task = normalTask(userId, "School routine");
+        TaskInstance task = normalTask(userId, "School routine");
         task.setId(taskId);
 
         when(repository.findById(taskId))
@@ -388,7 +389,7 @@ class TaskCommandServiceTest {
         UUID userId = UUID.randomUUID();
         UUID taskId = UUID.randomUUID();
 
-        Task task = normalTask(userId, "Daily workout");
+        TaskInstance task = normalTask(userId, "Daily workout");
         task.setId(taskId);
         task.pauseUntil(LocalDate.of(2026, 5, 10));
 
@@ -407,15 +408,15 @@ class TaskCommandServiceTest {
         verify(repository).save(task);
     }
 
-    private Task normalCompletedTask(UUID userId, String title) {
-        Task task = normalTask(userId, title);
+    private TaskInstance normalCompletedTask(UUID userId, String title) {
+        TaskInstance task = normalTask(userId, title);
         task.setStatus(TaskStatus.COMPLETED);
         task.setCompletedAt(Instant.now());
         return task;
     }
 
-    private Task normalTask(UUID userId, String title) {
-        Task task = new Task();
+    private TaskInstance normalTask(UUID userId, String title) {
+        TaskInstance task = new TaskInstance();
         task.setUserId(userId);
         task.setTitle(title);
         task.setStatus(TaskStatus.TODO);
@@ -428,8 +429,8 @@ class TaskCommandServiceTest {
     }
 
     @SuppressWarnings("unused")
-    private Task recurringTask(UUID userId, String title) {
-        Task task = normalTask(userId, title);
+    private TaskInstance recurringTask(UUID userId, String title) {
+        TaskInstance task = normalTask(userId, title);
         task.setRecurrenceRule(new TaskRecurrenceRule(
                 TaskRecurrenceType.DAILY,
                 LocalDate.of(2026, 5, 1),

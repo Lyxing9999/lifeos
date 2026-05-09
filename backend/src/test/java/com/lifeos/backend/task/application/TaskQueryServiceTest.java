@@ -1,8 +1,8 @@
 package com.lifeos.backend.task.application;
 
 import com.lifeos.backend.task.api.response.TaskResponse;
-import com.lifeos.backend.task.domain.Task;
-import com.lifeos.backend.task.domain.TaskCompletion;
+import com.lifeos.backend.task.application.query.TaskQueryService;
+import com.lifeos.backend.task.domain.entity.TaskInstance;
 import com.lifeos.backend.task.domain.TaskCompletionRepository;
 import com.lifeos.backend.task.domain.TaskRepository;
 import com.lifeos.backend.task.domain.enums.TaskMode;
@@ -16,16 +16,13 @@ import com.lifeos.backend.task.domain.valueobject.TaskRecurrenceRule;
 import com.lifeos.backend.task.infrastructure.TaskMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.lenient;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,7 +66,7 @@ class TaskQueryServiceTest {
         UUID userId = UUID.randomUUID();
         LocalDate date = LocalDate.of(2026, 5, 3);
 
-        Task task = activeTask(userId, "Pay rent");
+        TaskInstance task = activeTask(userId, "Pay rent");
         task.setDueDate(date);
 
         mockTaskList(userId, List.of(task));
@@ -85,7 +82,7 @@ class TaskQueryServiceTest {
         UUID userId = UUID.randomUUID();
         LocalDate selectedDate = LocalDate.of(2026, 5, 3);
 
-        Task task = activeTask(userId, "Pay rent");
+        TaskInstance task = activeTask(userId, "Pay rent");
         task.setDueDate(LocalDate.of(2026, 5, 1));
 
         mockTaskList(userId, List.of(task));
@@ -101,7 +98,7 @@ class TaskQueryServiceTest {
         UUID userId = UUID.randomUUID();
         LocalDate date = LocalDate.of(2026, 5, 3);
 
-        Task task = activeTask(userId, "Done task");
+        TaskInstance task = activeTask(userId, "Done task");
         task.setDueDate(date);
         task.setStatus(TaskStatus.COMPLETED);
 
@@ -117,7 +114,7 @@ class TaskQueryServiceTest {
         UUID userId = UUID.randomUUID();
         LocalDate date = LocalDate.of(2026, 5, 3);
 
-        Task task = activeTask(userId, "Urgent inbox");
+        TaskInstance task = activeTask(userId, "Urgent inbox");
         task.setTaskMode(TaskMode.URGENT);
 
         mockTaskList(userId, List.of(task));
@@ -132,7 +129,7 @@ class TaskQueryServiceTest {
     void inboxTasks_includePlainActiveTask() {
         UUID userId = UUID.randomUUID();
 
-        Task task = activeTask(userId, "Buy shoes");
+        TaskInstance task = activeTask(userId, "Buy shoes");
 
         mockTaskList(userId, List.of(task));
 
@@ -146,7 +143,7 @@ class TaskQueryServiceTest {
     void inboxTasks_excludeTaskWithDueDate() {
         UUID userId = UUID.randomUUID();
 
-        Task task = activeTask(userId, "Pay rent");
+        TaskInstance task = activeTask(userId, "Pay rent");
         task.setDueDate(LocalDate.of(2026, 5, 3));
 
         mockTaskList(userId, List.of(task));
@@ -160,7 +157,7 @@ class TaskQueryServiceTest {
     void inboxTasks_excludeRecurringTask() {
         UUID userId = UUID.randomUUID();
 
-        Task task = activeTask(userId, "Daily workout");
+        TaskInstance task = activeTask(userId, "Daily workout");
         task.setRecurrenceRule(new TaskRecurrenceRule(
                 TaskRecurrenceType.DAILY,
                 LocalDate.of(2026, 5, 1),
@@ -180,7 +177,7 @@ class TaskQueryServiceTest {
         UUID userId = UUID.randomUUID();
         LocalDate date = LocalDate.of(2026, 5, 3);
 
-        Task task = activeTask(userId, "Done task");
+        TaskInstance task = activeTask(userId, "Done task");
         task.setStatus(TaskStatus.COMPLETED);
         task.setCompletedAt(Instant.now());
         task.setAchievedDate(date);
@@ -200,7 +197,7 @@ class TaskQueryServiceTest {
         UUID userId = UUID.randomUUID();
         LocalDate date = LocalDate.of(2026, 5, 3);
 
-        Task task = activeTask(userId, "Done task");
+        TaskInstance task = activeTask(userId, "Done task");
         task.setStatus(TaskStatus.COMPLETED);
         task.setCompletedAt(Instant.now());
         task.setAchievedDate(date);
@@ -220,15 +217,15 @@ class TaskQueryServiceTest {
     void allTasks_excludeCompletedAndArchived_butIncludePaused() {
         UUID userId = UUID.randomUUID();
 
-        Task active = activeTask(userId, "Active");
+        TaskInstance active = activeTask(userId, "Active");
 
-        Task done = activeTask(userId, "Done");
+        TaskInstance done = activeTask(userId, "Done");
         done.setStatus(TaskStatus.COMPLETED);
 
-        Task paused = activeTask(userId, "Paused");
+        TaskInstance paused = activeTask(userId, "Paused");
         paused.pause();
 
-        Task archived = activeTask(userId, "Archived");
+        TaskInstance archived = activeTask(userId, "Archived");
         archived.setArchived(true);
 
         mockTaskList(userId, List.of(active, done, paused, archived));
@@ -239,16 +236,16 @@ class TaskQueryServiceTest {
                 .containsExactlyInAnyOrder("Active", "Paused");
     }
 
-    private void mockTaskList(UUID userId, List<Task> tasks) {
+    private void mockTaskList(UUID userId, List<TaskInstance> tasks) {
         when(repository.findByUserIdAndArchivedFalse(userId)).thenReturn(tasks);
         lenient().when(sortPolicy.comparator())
-                .thenReturn(Comparator.comparing(Task::getTitle));
-        for (Task task : tasks) {
+                .thenReturn(Comparator.comparing(TaskInstance::getTitle));
+        for (TaskInstance task : tasks) {
             lenient().when(mapper.toResponse(task)).thenReturn(toResponse(task));
         }
     }
-    private Task activeTask(UUID userId, String title) {
-        Task task = new Task();
+    private TaskInstance activeTask(UUID userId, String title) {
+        TaskInstance task = new TaskInstance();
         task.setId(UUID.randomUUID());
         task.setUserId(userId);
         task.setTitle(title);
@@ -261,7 +258,7 @@ class TaskQueryServiceTest {
         return task;
     }
 
-    private TaskResponse toResponse(Task task) {
+    private TaskResponse toResponse(TaskInstance task) {
         return TaskResponse.builder()
                 .id(task.getId())
                 .userId(task.getUserId())

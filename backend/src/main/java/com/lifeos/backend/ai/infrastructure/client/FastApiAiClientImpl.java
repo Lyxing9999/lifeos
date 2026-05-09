@@ -2,7 +2,7 @@ package com.lifeos.backend.ai.infrastructure.client;
 
 import com.lifeos.backend.ai.domain.AiSummaryRequest;
 import com.lifeos.backend.ai.domain.AiSummaryResult;
-import com.lifeos.backend.config.AiServiceProperties;
+import com.lifeos.backend.common.config.AiServiceProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

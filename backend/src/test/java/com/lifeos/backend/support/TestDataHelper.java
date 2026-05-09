@@ -7,9 +7,9 @@ import com.lifeos.backend.schedule.domain.ScheduleBlockType;
 import com.lifeos.backend.schedule.domain.ScheduleRecurrenceType;
 import com.lifeos.backend.task.api.request.CreateTaskRequest;
 import com.lifeos.backend.task.api.response.TaskResponse;
-import com.lifeos.backend.task.application.TaskCommandService;
-import com.lifeos.backend.task.application.TaskQueryService;
-import com.lifeos.backend.task.domain.Task;
+import com.lifeos.backend.task.application.command.TaskCommandService;
+import com.lifeos.backend.task.application.query.TaskQueryService;
+import com.lifeos.backend.task.domain.entity.TaskInstance;
 import com.lifeos.backend.task.domain.enums.TaskMode;
 import com.lifeos.backend.task.domain.enums.TaskPriority;
 import com.lifeos.backend.task.domain.enums.TaskRecurrenceType;
@@ -44,8 +44,8 @@ public class TestDataHelper {
         user.setActive(true);
         return userRepository.save(user);
     }
-    public Task createTaskWithoutDueDate(UUID userId, String title) {
-        Task task = new Task();
+    public TaskInstance createTaskWithoutDueDate(UUID userId, String title) {
+        TaskInstance task = new TaskInstance();
         task.setUserId(userId);
         task.setTitle(title);
         task.setStatus(TaskStatus.TODO);

@@ -1,7 +1,7 @@
 package com.lifeos.backend.financial.infrastructure.provider.payway.polling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lifeos.backend.config.PayWayProperties;
+import com.lifeos.backend.common.config.PayWayProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
